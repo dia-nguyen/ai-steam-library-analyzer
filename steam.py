@@ -1,0 +1,88 @@
+import requests
+import json
+from dotenv import dotenv_values
+
+config = dotenv_values('.env')
+
+steam_api_key = config["STEAM_API_KEY"]
+user_steam_id = config["STEAM_ID"]
+
+API_URL = "https://api.steampowered.com"
+
+def make_steam_request(api_endpoint, params):
+    """
+    Makes an HTTP GET request to a specified endpoint of the Steam Web API.
+
+    This function constructs a full URL by appending the provided endpoint to the Steam API base URL.
+    It then sends an HTTP GET request to that URL with the given parameters.
+
+    Args:
+        api_endpoint (str): The endpoint of the Steam API to which the request is made.
+        params (dict): A dictionary of parameters to be sent with the request.
+
+    Returns:
+        dict: The JSON response from the API if the request is successful (HTTP status code 200).
+        None: If the request fails or the API returns a non-200 status code.
+    """
+    url = f"{API_URL}/{api_endpoint}"
+
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return None
+
+
+def get_user_id(api_key:str, username:str):
+    """Get user id associated with input username"""
+
+    endpoint = "ISteamUser/ResolveVanityURL/v0001/"
+    params = {
+        'key': api_key,
+        'vanityurl': username,
+    }
+
+    return make_steam_request(endpoint, params)
+
+
+def get_user_info(api_key: str, user_id:str):
+    """Get user info associated with user id"""
+
+    endpoint = "ISteamUser/GetPlayerSummaries/v0002/"
+    params = {
+        'key': api_key,
+        'steamids': user_id,
+    }
+
+    return make_steam_request(endpoint, params)
+
+
+def get_user_recently_played_games(api_key: str, user_id:str):
+    """Get list of recently played games by user with associated user id """
+
+    endpoint = "IPlayerService/GetRecentlyPlayedGames/v0001/"
+    params = {
+        'key': api_key,
+        'steamid': user_id,
+        'include_appinfo': True,
+        'format': 'json'
+    }
+
+    response = make_steam_request(endpoint, params)
+    return response["response"]["games"]
+
+
+def recently_played_games():
+    recent_games = get_user_recently_played_games(steam_api_key, user_steam_id)
+
+    if recent_games:
+        print(recent_games)
+    else:
+        print("Could not fetch info")
+
+recently_played_games()
+
+def reformat_recently_play_data(recently_played_games: list):
+    """ Reformats list of dictionary to only include name of game and playtime"""
+    return [{"name": game["name"], "playtime_2weeks_in_mins": game["playtime_2weeks"]} for game in recently_played_games]
