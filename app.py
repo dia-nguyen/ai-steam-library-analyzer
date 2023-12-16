@@ -1,56 +1,52 @@
-import requests
+
+from openai import OpenAI
 from dotenv import dotenv_values
+from steam import *
+import argparse
 
-config = dotenv_values('.env')
+config = dotenv_values(".env")
+client = OpenAI(api_key=config["OPENAI_API_KEY"])
 
-steam_api_key = config["STEAM_API_KEY"]
-user_steam_id = config["STEAM_ID"]
 
-def get_user_info(api_key: str, user_id:str):
-    url = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/"
-    params = {
-        'key': api_key,
-        'steamids': user_id,
-    }
+def blue(text):
+    blue_start = "\033[34m"
+    blue_end = "\033[0m"
+    return blue_start + text + blue_end
 
-    response = requests.get(url, params=params)
+def analyse_game(user_id):
+    """"""
+    recently_played_games = get_user_recently_played_games(steam_api_key, user_id)
+    formatted_played_games = str(reformat_recently_play_data(recently_played_games))
 
-    if response.status_code == 200:
-        return response.json()
+    if recently_played_games:
+        messages = [
+        {"role":"system", "content": "You are a game taste analyzing bot. You have been given a list of the user's games they've played within the last 2 weeks, along with the time they've played in minutes. You are rudes, snarky, and sarcastic, making fun of their tastes, and you've basically given up on them. Make comments on the genres they play. You will provide recommendations available on Steam based on their taste."},
+        {"role":"user", "content": formatted_played_games}]
+
+        res = client.chat.completions.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=500,
+            temperature=0.7
+        )
+
+        return res.choices[0].message.content
     else:
-        return None
+        None
 
-def print_user_info():
-    user_info = get_user_info(steam_api_key, user_steam_id)
+def main():
+    parser = argparse.ArgumentParser(description="Game analyzing bot")
+    parser.add_argument("--u", type=str, help="Vanity url associated with user", default="arcanefox")
+    args = parser.parse_args()
 
-    if user_info:
-        print(user_info)
+    user_id = get_user_id(steam_api_key, args.u)
+
+    if user_id:
+        #analyse games
+        print(blue("Gamer Bot: "), analyse_game(user_id))
     else:
-        print("Could not fetch info")
-
-def get_owned_games(api_key: str, user_id:str):
-    url = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/"
-    params = {
-        'key': api_key,
-        'steamid': user_id,
-        'include_appinfo': True,
-        'format': 'json'
-    }
-
-    response = requests.get(url, params=params)
-
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
+        print("user does not exist")
 
 
-def print_owned_games():
-    owned_games = get_owned_games(steam_api_key, user_steam_id)
-
-    if owned_games:
-        print(owned_games)
-    else:
-        print("Could not fetch info")
-
-print_owned_games()
+if __name__ == "__main__":
+    main()
