@@ -35,16 +35,13 @@ def make_steam_request(api_endpoint, params):
 
 def get_user_id(api_key:str, username:str):
     """Get user id associated with input username"""
-    if username.isdigit():
-        return username
-    else:
-        endpoint = "ISteamUser/ResolveVanityURL/v0001/"
-        params = {
-            'key': api_key,
-            'vanityurl': username,
-        }
+    endpoint = "ISteamUser/ResolveVanityURL/v0001/"
+    params = {
+        'key': api_key,
+        'vanityurl': username,
+    }
 
-        return make_steam_request(endpoint, params)["response"]["steamid"]
+    return make_steam_request(endpoint, params)["response"].get("steamid")
 
 
 def get_user_info(api_key: str, user_id:str):
@@ -72,10 +69,7 @@ def get_user_recently_played_games(api_key: str, user_id:str):
 
     response = make_steam_request(endpoint, params)
 
-    if response["response"]["total_count"]> 0:
-        return response["response"]["games"]
-    else:
-        return None
+    return response["response"].get("games") or []
 
 def reformat_recently_play_data(recently_played_games: list):
     """ Reformats list of dictionary to only include name of game and playtime"""
@@ -95,10 +89,8 @@ def get_user_owned_games(api_key: str, user_id:str):
 
     response = make_steam_request(endpoint, params)
 
-    if response["response"]["game_count"]> 0:
-        return response["response"]["games"]
-    else:
-        return None
+    return response["response"].get("games") or []
+
 
 def filter_owned_games_data(games_list: list):
     """
@@ -109,7 +101,7 @@ def filter_owned_games_data(games_list: list):
 
     games_played_last_year = [
         game for game in games_list
-        if game["playtime_forever"] > 360
+        if game["playtime_forever"] > 1800
     ]
 
     return [{"name": game["name"], "playtime_total": game["playtime_forever"]} for game in games_played_last_year]
