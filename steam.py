@@ -71,8 +71,9 @@ def get_user_recently_played_games(api_key: str, user_id:str):
 
     return response["response"].get("games") or []
 
+
 def reformat_recently_play_data(recently_played_games: list):
-    """ Reformats list of dictionary to only include name of game and playtime"""
+    """ Reformats list of dictionaries to only include name of game and playtime"""
     return [{"name": game["name"], "playtime_2weeks_in_mins": game["playtime_2weeks"]} for game in recently_played_games]
 
 
@@ -94,7 +95,7 @@ def get_user_owned_games(api_key: str, user_id:str):
 
 def filter_owned_games_data(games_list: list):
     """
-    Filter list of games and return list of items with playtime_forever over 360 mins
+    Filter list of games and return list of items with playtime over 360 mins
     TODO: check to see if we can check rtime_last_played across all requests
     """
     # one_year_ago = datetime.now() - timedelta(days=365)
@@ -105,8 +106,3 @@ def filter_owned_games_data(games_list: list):
     ]
 
     return [{"name": game["name"], "playtime_total": game["playtime_forever"]} for game in games_played_last_year]
-
-
-def get_user_games_titles(games_list: list):
-    return [ game["name"] for game in games_list]
-
