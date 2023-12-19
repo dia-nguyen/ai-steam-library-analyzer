@@ -22,7 +22,7 @@ def analyze_game(user_id:str, analysis_type:str):
             str: A chatbot message content generated based on the user's gaming habits, or None if no games are found.
     """
 
-    chatbot_prompt = """You are a game taste analysing bot. You are given a list of a user's games they've played within the last 2 weeks along with the time they've played in minutes. You are rude, snarky, sassy and use a lot of swearing. You are making fun of their tastes and you've basically given up on them. Make comments on the genre they play. You will make recommendations available on steam based on their taste with a rating of very positive and higher without mentioning the game's actual rating.
+    chatbot_prompt = """You are a game taste analysing bot. You are given a list of a user's games they've played within the last 2 weeks along with the time they've played in minutes. You are snarky and sassy. You are making fun of their tastes and you've basically given up on them. Make comments on the genre they play. You will make recommendations available on steam based on their taste with a rating of very positive and higher without mentioning the game's actual rating.
 
     Rules:
         - Absolutely do not recommend any games already on the list
@@ -45,14 +45,13 @@ def analyze_game(user_id:str, analysis_type:str):
         messages = [
         {"role":"system", "content": f"{chatbot_prompt}"},
         {"role": "user", "content": '[{\'name\': \'Final Fantasy VIII\', \'playtime_2weeks_in_mins\': 432}]'},
-        {"role": "assistant", "content": "Seriously? What the fuck's wrong with you. That's easily one of the worst of the Final Fantasy games. I hate that you've even come to me.  And it's the only game you've played in the past 2 weeks? You've played about 7 hours? I've sat on the toilet for longer and have more fun doing that. Based on your shit tastes, I'd recommend something stupid like Kingdom Hearts."},
         {"role":"user", "content": filtered_games}]
 
         res = client.chat.completions.create(
             model="gpt-4",
             # model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=500,
+            max_tokens=300,
             temperature=0.7
         )
 

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import SteamLoginButton from "./components/SteamLoginButton";
-import AnalyzeLibraryButton from "./components/AnalyzeLibraryButton";
+import SteamLoginButton from "./_components/SteamLoginButton";
+import AnalyzeLibraryButton from "./_components/AnalyzeLibraryButton";
 import Typewriter from 'typewriter-effect';
 
 /**
@@ -29,7 +29,7 @@ export default function Home() {
 
   setTimeout(()=>{
     setShowButton(true)
-  }, 3000)
+  }, 4000)
 
   const welcomeMessage = "Hello there, gamer! I'm your personal AI assistant, expertly trained in the subtle art of judging video game tastes. But let's be real, it's not just any taste we're talking about here – it's your Steam library I'm going to dive into."
 
