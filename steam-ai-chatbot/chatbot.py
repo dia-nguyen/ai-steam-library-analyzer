@@ -50,6 +50,7 @@ def analyze_game(user_id:str, analysis_type:str):
 
         res = client.chat.completions.create(
             model="gpt-4",
+            # model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=500,
             temperature=0.7
