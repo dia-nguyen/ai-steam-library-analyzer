@@ -2,16 +2,9 @@
 from openai import OpenAI
 from dotenv import dotenv_values
 from steam import *
-import argparse
 
 config = dotenv_values(".env")
 client = OpenAI(api_key=config["OPENAI_API_KEY"])
-
-
-def blue(text):
-    blue_start = "\033[34m"
-    blue_end = "\033[0m"
-    return blue_start + text + blue_end
 
 
 def analyze_game(user_id:str, analysis_type:str):
@@ -65,33 +58,3 @@ def analyze_game(user_id:str, analysis_type:str):
         return res.choices[0].message.content
     else:
         None
-
-def main():
-    """
-    Main function to run the game analyzing bot.
-
-    This function sets up command-line argument parsing for the user's vanity URL or user ID and the type of game analysis to perform. It then retrieves the user's Steam ID and performs the specified analysis using the analyse_game function. Outputs the results of the analysis or an error message if the user does not exist.
-
-    CLI args:
-        --u (str): Vanity URL or user ID associated with the user. Default is "arcanefox".
-        --type (str): Type of analysis to perform. Options are "year" for annual analysis or "recent" for analysis of the past 2 weeks. Default is "year".
-    """
-    parser = argparse.ArgumentParser(description="Game analyzing bot")
-    parser.add_argument("--u", type=str, help="Vanity url or user id associated with user", default="elixir__")
-    parser.add_argument("--type", type=str, choices=["year", "recent"], default="year", help="Anaylze the past year or 2 weeks")
-    args = parser.parse_args()
-
-    user_id = get_user_id(steam_api_key, args.u)
-
-    if user_id:
-        print(blue("Rood Bot: "), analyze_game(user_id, args.type))
-    else:
-        print(blue("Rood Bot: "),"User does not exist")
-
-
-if __name__ == "__main__":
-    main()
-
-#temp function
-def analyze(user_id:str):
-    return analyze_game(user_id, "year")
