@@ -1,7 +1,7 @@
 # AI Steam Analyzer App (WIP)
 A fun ChatGPT-4 AI app designed to analyze your Steam library and give you its honest (and perhaps a bit cheeky) opinion on your gaming tastes.
 
-The app is divided into three main components: the Steam Auth API, the ChatGPT Steam Library Analyzer API, and the Next.js frontend.
+The app is divided into 2 main components: the ChatGPT Steam Library Analyzer API, and the Next.js frontend.
 
 ## Directory Structure
 - /steam-ai-chatbot: Houses the ChatGPT Steam Library Analyzer API, which performs the analysis of users' Steam libraries.
