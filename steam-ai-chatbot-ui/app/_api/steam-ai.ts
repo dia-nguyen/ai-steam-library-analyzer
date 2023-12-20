@@ -1,5 +1,5 @@
 const API_URL = "http://127.0.0.1:5001/analyze";
-export const AUTH_URL = "http://127.0.0.1:5000/authentication";
+
 import { AnalyzeSteamLibraryProps } from "../_types/analyze";
 
 export async function analyzeSteamLibrary(steamId: string): Promise<AnalyzeSteamLibraryProps> {
