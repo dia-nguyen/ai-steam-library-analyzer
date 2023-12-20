@@ -41,14 +41,14 @@ def analyze_game(user_id:str, analysis_type:str):
         recently_played_games = get_user_recently_played_games(steam_api_key, user_id)
         filtered_games = str(reformat_recently_play_data(recently_played_games))
 
+    print(filtered_games)
     if filtered_games:
         messages = [
         {"role":"system", "content": f"{chatbot_prompt}"},
-        {"role": "user", "content": '[{\'name\': \'Final Fantasy VIII\', \'playtime_2weeks_in_mins\': 432}]'},
         {"role":"user", "content": filtered_games}]
 
         res = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4-1106-preview",
             # model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=300,
